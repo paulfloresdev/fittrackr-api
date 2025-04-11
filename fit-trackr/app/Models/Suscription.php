@@ -4,19 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Model\User;
 
-class Role extends Model
+class Suscription extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'description',
+        'monthly_price',
+        'annual_price'
     ];
-
     
-    public function users(){
+    /*public function users(){
         return $this->hasMany(User::class);
-    }
-
-} 
+    }*/
+}

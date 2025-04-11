@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Role;
+use App\Models\Suscription;
 
-class RoleController extends Controller
+class SuscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = Role::all();
+        $suscriptions = Suscription::all();
 
-        if($roles->isEmpty()){
+        if($suscriptions->isEmpty()){
             return response()->json([
                 'message' => 'No se encontraron los recursos solicitados.',
             ], 404);
@@ -23,7 +23,7 @@ class RoleController extends Controller
 
         return response()->json([
             'message' => 'Consulta realizada exitosamente.',
-            'data' => $roles
+            'data' => $suscriptions
         ], 200);
     }
 
@@ -33,16 +33,22 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|min:1|max:24',
+            'name' => 'required|string|min:1|max:64',
+            'description' => 'required|string|min:1|max:256',
+            'monthly_price' => 'required|numeric',
+            'annual_price' => 'required|numeric',
         ]);
 
-        $role = Role::create([
-            'name' => $request->name
+        $suscription = Suscription::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'monthly_price' => $request->monthly_price,
+            'annual_price' => $request->annual_price,
         ]);
 
         return response()->json([
             'message' => 'Recurso almacenado exitosamente.',
-            'data' => $role
+            'data' => $suscription
         ], 201);
     }
 
@@ -51,9 +57,9 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        $role = Role::find($id);
+        $suscription = Suscription::find($id);
 
-        if($role == null){
+        if($suscription == null){
             return response()->json([
                 'message' => 'No se encontró el recurso solicitado.',
             ], 404);
@@ -61,7 +67,7 @@ class RoleController extends Controller
 
         return response()->json([
             'message' => 'Consulta realizada exitosamente.',
-            'data' => $role
+            'data' => $suscription
         ], 200);
     }
 
@@ -70,21 +76,31 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $role = Role::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'required|string|min:1|max:64',
+            'description' => 'required|string|min:1|max:256',
+            'monthly_price' => 'required|numeric',
+            'annual_price' => 'required|numeric',
+        ]);
 
-        if($role == null){
+        $suscription = Suscription::find($id);
+
+        if($suscription == null){
             return response()->json([
-                'message' => 'No se encontró el recurso que busca actualizar.',
+                'message' => 'No se encontró el recurso solicitado.',
             ], 404);
         }
 
-        $role->update([
-            'name' => $request->name
+        $suscription->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'monthly_price' => $request->monthly_price,
+            'annual_price' => $request->annual_price,
         ]);
 
         return response()->json([
             'message' => 'Recurso actualizado exitosamente.',
-            'data' => $role
+            'data' => $suscription
         ], 200);
     }
 
@@ -93,15 +109,15 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        $role = Role::findOrFail($id);
+        $suscription = Suscription::find($id);
 
-        if($role == null){
+        if($suscription == null){
             return response()->json([
-                'message' => 'No se encontró el recurso que busca eliminar.',
+                'message' => 'No se encontró el recurso solicitado.',
             ], 404);
         }
 
-        $role->delete();
+        $suscription->delete();
 
         return response()->json([
             'message' => 'Recurso eliminado exitosamente.'
